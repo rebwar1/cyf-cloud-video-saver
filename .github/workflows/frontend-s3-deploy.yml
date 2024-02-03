@@ -44,5 +44,5 @@ jobs:
           aws-region: eu-west-2
 
       - name: Deploy static site to S3 bucket
-        run: aws s3 sync ./build s3://youtube-github-action --delete
+        run: aws s3 sync ./dist s3://youtube-github-action --delete
         working-directory: ./client
