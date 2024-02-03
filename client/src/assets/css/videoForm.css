@@ -1,0 +1,49 @@
+.border {
+  border: 1px solid #e2e8f0;
+}
+
+.button-style {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background-color: #000;
+  color: #fff;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.button-style:hover {
+  background-color: #e53e3e;
+}
+
+/* .main {
+  margin: 1rem 0 3rem 0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  height: 90%;
+} */
+/* videoForm.css */
+
+.custom-form {
+  width: 600px; /* Adjust the width to your preference */
+}
+
+.custom-form label {
+  color: #000; /* Set label text color to black */
+}
+
+.custom-form input {
+  color: #333; /* Lighten the input text color */
+}
+.input {
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.pb-8 {
+  padding: 0;
+}
