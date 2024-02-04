@@ -13,19 +13,19 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: npm install
-        working-directory: /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver/backend
+          lock-file: backend/package-lock.json # Adjust the path based on your project structure
+
       - run: |
-          touch .env
-          echo "${{ secrets.PROD_ENV_FILE }}" > .env
-        working-directory: /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver/backend
+          touch backend/.env
+          echo "${{ secrets.PROD_ENV_FILE }}" > backend/.env
+
       - run: npm ci
-        working-directory: /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver/backend
+        working-directory: backend
