@@ -22,9 +22,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
       - run: npm install
-        working-directory: ./backend
+        working-directory: /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver/backend
       - run: |
           touch .env
           echo "${{ secrets.PROD_ENV_FILE }}" > .env
+        working-directory: /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver/backend
       - run: npm ci
-        working-directory: ./backend
+        working-directory: /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver/backend
