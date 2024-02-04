@@ -14,6 +14,12 @@ jobs:
       BACKEND_DIR: ${{ secrets.BACKEND_DIR }}
 
     steps:
+      - name: Debugging
+        run: |
+          echo "SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}"
+          echo "EC2_HOST_DNS: ${{ secrets.EC2_HOST_DNS }}"
+          echo "EC2_USERNAME: ${{ secrets.EC2_USERNAME }}"
+
       - name: Copy Files and Folders to EC2
         uses: appleboy/scp-action@master
         with:
