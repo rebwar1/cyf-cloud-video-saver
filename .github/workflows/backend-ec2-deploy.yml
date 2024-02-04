@@ -9,7 +9,21 @@ jobs:
   deploy-to-ec2:
     runs-on: ubuntu-latest
 
+    env:
+      TARGET_DIR: ${{ secrets.TARGET_DIR }}
+      BACKEND_DIR: ${{ secrets.BACKEND_DIR }}
+
     steps:
+      - name: Copy Files and Folders to EC2
+        uses: appleboy/scp-action@master
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.EC2_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
+          port: 22
+          source: "*"
+          target: "${{ env.TARGET_DIR }}"
+
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -18,14 +32,14 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Install Dependencies
+      - name: Install Backend Dependencies
         run: |
-          cd ./backend
+          cd ./${{ env.BACKEND_DIR }}
           npm ci
 
-      - name: Run Tests
+      - name: Run Backend Tests
         run: |
-          cd ./backend
+          cd ./${{ env.BACKEND_DIR }}
           npm test -- --passWithNoTests
 
       - name: Set Up .env File on EC2
@@ -36,25 +50,10 @@ jobs:
           REMOTE_USER: ${{ secrets.EC2_USERNAME }}
           port: 22
           script: |
-            cd /home/ubuntu/cyf-cloud-video-saver/backend
-            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" > .env
-            echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
-            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
-            echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
-            echo "process.env.PORT=${{ secrets.PORT }}" >> .env
+            touch "${{ env.TARGET_DIR }}/${{ env.BACKEND_DIR }}/.env"
+            echo ${{ secrets.PROD_ENV_FILE }}" > "${{ env.TARGET_DIR }}/${{ env.BACKEND_DIR }}/.env"
 
-      - name: Copy Files to EC2
-        uses: appleboy/scp-action@master
-        with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.EC2_HOST_DNS }}
-          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
-          port: 22
-          source: "./backend/*"
-          target: "/home/ubuntu/cyf-cloud-video-saver/backend"
-
-      - name: Deploy Application
+      - name: Deploy Backend Application
         uses: appleboy/ssh-action@master
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -63,6 +62,6 @@ jobs:
           port: 22
           script: |
             source ~/.nvm/nvm.sh
-            cd /home/ubuntu/cyf-cloud-video-saver/backend
+            cd "${{ env.TARGET_DIR }}/${{ env.BACKEND_DIR }}"
             npm ci
             pm2 restart all
