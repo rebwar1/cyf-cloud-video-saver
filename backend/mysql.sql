@@ -103,4 +103,6 @@ aws s3 sync build/ s3://youtube-saver      -this is name of bucket-
 
  rsync -avz --exclude 'node_modules' --exclude '.git' --exclude '.env' \
  -e "ssh -i ~/.ssh/cyf.pem" \
- . ubuntu@ec2-35-178-47-240.eu-west-2.compute.amazonaws.com:~/app
+ . ubuntu@ec2-35-198-437-240.eu-west-2.compute.amazonaws.com:~/app
+
+

@@ -1,67 +1,68 @@
-name: EC2 Deployment
+name: Node.js App Deployment
 
 on:
   push:
-    branches: [backup]
+    branches:
+      - githubAction
 
 jobs:
   deploy-to-ec2:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: List directory contents
-        run: ls -alh
-
-      - name: Set up Node.js
+      - name: Set Up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: 20.x
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./server
+      - name: Install Dependencies
+        run: |
+          cd ./backend
+          npm ci
 
-      - name: Test
-        run: npm test -- --passWithNoTests
-        working-directory: ./server
+      - name: Run Tests
+        run: |
+          cd ./backend
+          npm test -- --passWithNoTests
 
-      - name: Set up .env file on EC2
+      - name: Set Up .env File on EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_SSH_USERNAME }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.EC2_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
           port: 22
           script: |
-            cd /home/ubuntu/Full-Stack-Project-Assessment/server
-            echo "DB_USER=${{ secrets.DB_USER }}" > .env
-            echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-            echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+            cd /home/ubuntu/cyf-cloud-video-saver/backend
+            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" > .env
+            echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+            echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+            echo "process.env.PORT=${{ secrets.PORT }}" >> .env
 
-      - name: Copy files to EC2
+      - name: Copy Files to EC2
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_SSH_USERNAME }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.EC2_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
           port: 22
-          source: "./server/*"
-          target: "/home/ubuntu/Full-Stack-Project-Assessment/server"
+          source: "./backend/*"
+          target: "/home/ubuntu/cyf-cloud-video-saver/backend"
 
-      - name: Deploy
+      - name: Deploy Application
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_SSH_USERNAME }}
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.EC2_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
           port: 22
           script: |
             source ~/.nvm/nvm.sh
-            cd /home/ubuntu/Full-Stack-Project-Assessment/server
-            npm install
+            cd /home/ubuntu/cyf-cloud-video-saver/backend
+            npm ci
             pm2 restart all
