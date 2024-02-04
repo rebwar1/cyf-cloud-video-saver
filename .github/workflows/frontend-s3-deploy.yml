@@ -2,7 +2,7 @@ name: Deploy Project
 on:
   push:
     branches:
-      - githubAction
+      - test
 jobs:
   test:
     runs-on: ubuntu-latest
