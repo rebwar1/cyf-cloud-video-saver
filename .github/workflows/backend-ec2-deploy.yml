@@ -23,9 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm install
         # working-directory: ./server
-      # - name: Test
-      #   run: npm test -- --passWithNoTests
-      # working-directory: ./server
+
+      - name: Install pm2
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - run: npm install -g pm2
+
       - name: Set up .env file on EC2
         uses: appleboy/ssh-action@master
         with:
@@ -55,6 +59,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver
-            source ~/.nvm/nvm.sh
             npm install
             pm2 restart all
