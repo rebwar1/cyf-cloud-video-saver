@@ -43,8 +43,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          # source: "./server/*"
-          # target: "/home/ubuntu/Full-Stack-Project-Assessment/server"
+          source: "./*"
+          target: "/home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver"
 
       - name: Deploy
         uses: appleboy/ssh-action@master
