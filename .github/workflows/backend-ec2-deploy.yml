@@ -1,77 +1,58 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
 name: Node.js App Deployment
 
 on:
   push:
-    branches:
-      - githubAction
+    branches: ["githubAction"]
+  pull_request:
+    branches: ["githubAction"]
 
 jobs:
-  deploy-to-ec2:
+  build:
     runs-on: ubuntu-latest
 
-    env:
-      TARGET_DIR: ${{ secrets.TARGET_DIR }}
-      BACKEND_DIR: ${{ secrets.BACKEND_DIR }}
-      DEBUG: "true"
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - name: Debugging
-        run: |
-          echo "SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}"
-          echo "EC2_HOST_DNS: ${{ secrets.EC2_HOST_DNS }}"
-          echo "EC2_USERNAME: ${{ secrets.EC2_USERNAME }}"
-          echo "TARGET_DIR: ${{ env.TARGET_DIR }}"
-          echo "BACKEND_DIR: ${{ env.BACKEND_DIR }}"
-          echo "DEBUG: ${{ env.DEBUG }}"
-
-      - name: Copy Files and Folders to EC2
-        uses: appleboy/scp-action@master
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          host: ${{ secrets.EC2_HOST_DNS }}
-          username: ${{ secrets.EC2_USERNAME }}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "*"
-          target: "${{ env.TARGET_DIR }}"
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - run: npm i
+      - run: npm run build --if-present
+      - run: npm test
+  deploy:
+    runs-on: ubuntu-latest
 
-      - name: Checkout Code
-        uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set Up Node.js
-        uses: actions/setup-node@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 20
 
-      - name: Install Backend Dependencies
-        run: |
-          cd ./${{ env.BACKEND_DIR }}
-          npm ci
+      - name: Install dependencies
+        run: npm install
 
-      - name: Run Backend Tests
-        run: |
-          cd ./${{ env.BACKEND_DIR }}
-          npm test -- --passWithNoTests
+      - name: Build application
+        run: npm run build
 
-      - name: Set Up .env File on EC2
-        uses: appleboy/ssh-sync@v2
+      - name: Deploy to server
+        uses: easingthemes/ssh-deploy@v4
         with:
-          host: ${{ secrets.EC2_HOST_DNS }}
-          username: ${{ secrets.EC2_USERNAME }}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            touch "${{ env.TARGET_DIR }}/${{ env.BACKEND_DIR }}/.env"
-            echo ${{ secrets.PROD_ENV_FILE }}" > "${{ env.TARGET_DIR }}/${{ env.BACKEND_DIR }}/.env"
-
-      - name: Deploy Backend Application
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST_DNS }}
-          username: ${{ secrets.EC2_USERNAME }}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            source ~/.nvm/nvm.sh
-            cd "${{ env.TARGET_DIR }}/${{ env.BACKEND_DIR }}"
-            npm ci
-            pm2 restart all
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.EC2_HOST_DNS  }}
+          REMOTE_USER: ${{ secrets.EC2_USERNAME }}
+          SOURCE: "*"
+          TARGET: "./cyf-cloud-video-saver/backend"
+          ARGS: -rlgoDzvc -i
+          SSH_CMD_ARGS: -o StrictHostKeyChecking=no
