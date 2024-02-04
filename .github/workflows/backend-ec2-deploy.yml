@@ -41,7 +41,7 @@ jobs:
           node-version: 20
 
       - name: Change to application directory
-        run: cd cyf-cloud-video-saver/backend
+        run: cd "/home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/backend"
 
       - name: Install dependencies
         run: npm install
@@ -56,6 +56,6 @@ jobs:
           REMOTE_HOST: ${{ secrets.EC2_HOST_DNS  }}
           REMOTE_USER: ${{ secrets.EC2_USERNAME }}
           SOURCE: "*"
-          TARGET: "./cyf-cloud-video-saver/backend"
+          TARGET: "/home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver"
           ARGS: -rlgoDzvc -i
           SSH_CMD_ARGS: -o StrictHostKeyChecking=no
