@@ -29,30 +29,30 @@ jobs:
       - name: Set up .env file on EC2
         uses: appleboy/ssh-action@master
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          EC2_HOST_DNS: ${{ secrets.EC2_HOST_DNS }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+          host: ${{ secrets.EC2_HOST_DNS }}
+          username: ${{ secrets.EC2_USERNAME }}
           port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo ${{ secrets.PROD_ENV_FILE }} > .env
 
       - name: Copy files to EC2
         uses: appleboy/scp-action@master
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          EC2_HOST_DNS: ${{ secrets.EC2_HOST_DNS }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+          host: ${{ secrets.EC2_HOST_DNS }}
+          username: ${{ secrets.EC2_USERNAME }}
           port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           # source: "./server/*"
           # target: "/home/ubuntu/Full-Stack-Project-Assessment/server"
 
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          EC2_HOST_DNS: ${{ secrets.EC2_HOST_DNS }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+          host: ${{ secrets.EC2_HOST_DNS }}
+          username: ${{ secrets.EC2_USERNAME }}
           port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             source ~/.nvm/nvm.sh
             # cd /home/ubuntu/Full-Stack-Project-Assessment/server
