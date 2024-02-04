@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20"
-        run: npm install -g pm2
+      - run: npm install -g pm2
 
       - name: Set up .env file on EC2
         uses: appleboy/ssh-action@master
