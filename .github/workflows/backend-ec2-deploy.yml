@@ -54,7 +54,7 @@ jobs:
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            cd /home/ubuntu/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver
             source ~/.nvm/nvm.sh
-            # cd /home/ubuntu/Full-Stack-Project-Assessment/server
             npm install
             pm2 restart all
