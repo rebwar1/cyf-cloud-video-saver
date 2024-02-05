@@ -22,4 +22,8 @@ jobs:
       - run: |
           touch .env
           echo "${{ secrets.PROD_ENV_FILE }}" > .env
-      - run: pm2 restart cyf
+      - name: Create private key file
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > cyf.pem
+      - name: SSH into EC2 and restart server
+        run: |
+          ssh -o StrictHostKeyChecking=no -i "cyf.pem" ubuntu@ec2-13-41-69-27.eu-west-2.compute.amazonaws.com "cd /home/ubuntu && npm install && pm2 restart cyf"
