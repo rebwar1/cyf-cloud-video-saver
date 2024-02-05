@@ -22,4 +22,3 @@ jobs:
       - run: |
           touch .env
           echo "${{ secrets.PROD_ENV_FILE }}" > .env
-      - run: pm2 start server.js --name "cyf_app" --daemon
