@@ -4,7 +4,7 @@
 //     : "http://localhost:3001";
 
 export const baseUrl =
-  "http://ec2-35-178-47-240.eu-west-2.compute.amazonaws.com:3001";
+  "http://ec2-13-41-69-27.eu-west-2.compute.amazonaws.com:3001";
 
 // export const baseUrl =
 //   import.meta.env.NODE === 'production'
