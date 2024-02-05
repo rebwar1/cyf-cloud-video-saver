@@ -66,5 +66,6 @@ jobs:
             node -v
             pm2 -v
 
+            export PATH=$PATH:/home/ubuntu/actions-runner-backend/externals/node20/bin
             npm install
             pm2 restart all
