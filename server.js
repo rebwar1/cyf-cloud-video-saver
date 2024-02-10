@@ -150,6 +150,10 @@ db.connect(function (err) {
   console.log("Connected to MySQL database!");
 });
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the video API!");
+});
+
 // This endpoint is used to get all the videos
 app.get("/videos", (req, res) => {
   const query = "SELECT * FROM videos ORDER BY title";
