@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  client:
+    depends_on:
+      - backend
+    build: ./client
+    ports:
+      - 3000:3000
+    volumes:
+      - ./client:/app
+
+  backend:
+    depends_on:
+      - db
+    build: ./backend
+    ports:
+      - 3001:3001
+    environment:
+      DB_URL: mysql://db/vidly
+    volumes:
+      - ./backend:/app
+    command: ./docker-entrypoint.sh
+
+  db:
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    volumes:
+      - vidly://data/db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vidly
+
+volumes:
+  vidly:
