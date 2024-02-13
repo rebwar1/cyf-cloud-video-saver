@@ -1,36 +1,44 @@
-version: "3.8"
+version: "3"
 
 services:
   client:
-    depends_on:
-      - backend
-    build: ./client
+    build:
+      context: ./client
     ports:
-      - 3000:3000
-    volumes:
-      - ./client:/app
+      - "5173:5173" # Expose the client app port
+    depends_on:
+      - backend # Wait for the backend service to be ready before starting the client
+    networks:
+      - backend_network
 
   backend:
+    build:
+      context: ./backend
+    ports:
+      - "3001:3001"
     depends_on:
-      - db
-    build: ./backend
-    ports:
-      - 3001:3001
+      - mysql # Wait for the MySQL database service to be ready before starting the backend
+    networks:
+      - backend_network
+    restart: always
     environment:
-      DB_URL: mysql://db/vidly
-    volumes:
-      - ./backend:/app
-    command: ./docker-entrypoint.sh
+      MYSQL_USER: root
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: video_app
+      MYSQL_PASSWORD: azad4582
+      MYSQL_PORT: 3306
+      PORT: 3001
 
-  db:
+  mysql:
     image: mysql:latest
-    ports:
-      - 3306:3306
-    volumes:
-      - vidly://data/db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: vidly
+      MYSQL_ROOT_PASSWORD: azad4582
+      MYSQL_DATABASE: video_app
+      MYSQL_PASSWORD: azad4582
+    ports:
+      - "3306:3306"
+    restart: always
 
-volumes:
-  vidly:
+networks:
+  backend_network:
+    driver: bridge

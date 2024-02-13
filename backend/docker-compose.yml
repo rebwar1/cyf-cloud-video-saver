@@ -1,0 +1,50 @@
+# version: "3"
+
+# services:
+#   nodejs:
+#     build: .
+#     ports:
+#       - "3001:3001"
+#     depends_on:
+#       - mysql
+#     environment:
+#       - MYSQL_HOST=mysql
+#       - MYSQL_USER=root
+#       - MYSQL_PASSWORD=azad4582
+#       - MYSQL_DATABASE=video_app
+
+#   mysql:
+#     image: mysql:latest
+#     ports:
+#       - "3306:3306"
+#     environment:
+#       - MYSQL_ROOT_PASSWORD=azad4582
+#       - MYSQL_DATABASE=video_app
+
+version: "3"
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-1
+    ports:
+      - "3306:3306"
+    networks:
+      - backend_default
+    environment:
+      MYSQL_ROOT_PASSWORD: azad4582
+      MYSQL_DATABASE: video_app
+
+  nodejs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nodejs-1
+    ports:
+      - "3001:3001"
+    networks:
+      - backend_default
+    depends_on:
+      - mysql
+
+networks:
+  backend_default:
