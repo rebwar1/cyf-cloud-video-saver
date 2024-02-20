@@ -19,29 +19,29 @@ Observation:
 
 ✅terraform apply -auto-approve
 
-# Connect to Private EC2 Instances from Bastion EC2 Instance
+Connect to Private EC2 Instances from Bastion EC2 Instance
 
-# ✅chmod 400 private-key/terraform-key.pem
+✅chmod 400 private-key/terraform-key.pem
 
-# ✅ssh -i private-key/terraform-key.pem ec2-user@35.179.69.6
+✅ssh -i private-key/terraform-key.pem ec2-user@35.179.69.6
 
-# cd /tmp
+cd /tmp
 
-# ls -lrta
+ls -lrta
 
-# ✅curl http://10.0.2.99
+✅curl http://10.0.2.99
 
-# ✅curl http://10.0.1.235/app1-install/metadata.html
+✅curl http://10.0.1.235/app1-install/metadata.html
 
 # 💫💫 throw the public sign to private 💫💫
 
-# ssh -i /tmp/terraform-key.pem ec2-user@<Private-Instance-1-Private-IP>
+ssh -i /tmp/terraform-key.pem ec2-user@<Private-Instance-1-Private-IP>
 
-# ✅ssh -i /tmp/terraform-key.pem ec2-user@10.0.2.99
+✅ssh -i /tmp/terraform-key.pem ec2-user@10.0.2.99
 
-# cd /var/www/html
+cd /var/www/html
 
-# cd /var/log
+cd /var/log
 
 ````
 
