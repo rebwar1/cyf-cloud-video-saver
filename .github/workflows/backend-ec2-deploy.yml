@@ -2,9 +2,10 @@ name: Node.js CI/CD
 
 on:
   push:
-    branches: ["test"]
+    branches: ["IaC-github"]
 
 jobs:
+  environment: IaC-github
   build:
     runs-on: self-hosted
     strategy:
@@ -22,9 +23,9 @@ jobs:
           touch .env
           echo "${{ secrets.PROD_ENV_FILE }}" > .env
       - name: Create private key file
-        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > cyf.pem
+        run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > terraform-key.pem
       - name: Set correct permissions for the private key file
-        run: chmod 600 cyf.pem
+        run: chmod 600 terraform-key.pem
       - name: SSH into EC2 and restart server
         run: |
-          ssh -o StrictHostKeyChecking=no -i "cyf.pem" ubuntu@ec2-13-41-69-27.eu-west-2.compute.amazonaws.com "cd ~/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver && npm install && pm2 restart cyf"
+          ssh -o StrictHostKeyChecking=no -i "terraform-key.pem" ubuntu@ec2-13-41-69-27.eu-west-2.compute.amazonaws.com "cd ~/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver && npm install && pm2 restart cyf"

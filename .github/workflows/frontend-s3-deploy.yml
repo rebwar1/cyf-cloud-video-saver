@@ -5,6 +5,7 @@ on:
     branches: ["IaC-github"]
 
 jobs:
+  environment: IaC-github
   build:
     runs-on: self-hosted
     strategy:
