@@ -1,35 +1,3 @@
-# name: Node.js CI/CD
-
-# on:
-#   push:
-#     branches: ["IaC-github"]
-
-# jobs:
-#   environment: IaC-github
-#   build:
-#     runs-on: self-hosted
-#     strategy:
-#       matrix:
-#         node-version: [20.x]
-#     steps:
-#       - uses: actions/checkout@v3
-#       - name: Use Node.js ${{ matrix.node-version }}
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: ${{ matrix.node-version }}
-#           cache: "npm"
-#       - run: npm ci
-#       - run: |
-#           touch .env
-#           echo "${{ secrets.PROD_ENV_FILE }}" > .env
-#       - name: Create private key file
-#         run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > terraform-key.pem
-#       - name: Set correct permissions for the private key file
-#         run: chmod 600 terraform-key.pem
-#       - name: SSH into EC2 and restart server
-#         run: |
-#           ssh -o StrictHostKeyChecking=no -i "terraform-key.pem" ubuntu@ec2-13-41-69-27.eu-west-2.compute.amazonaws.com "cd ~/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver && npm install && pm2 restart cyf"
-
 name: Node.js CI/CD
 
 on:
@@ -37,37 +5,28 @@ on:
     branches: ["IaC-github"]
 
 jobs:
-  deploy:
+  build:
     runs-on: self-hosted
     environment:
       name: IaC-github
     strategy:
       matrix:
-        node-version: [20.x] # Use a valid Node.js version
+        node-version: [20.x]
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Create .env file
-        run: echo "${{ secrets.PROD_ENV_FILE }}" > .env
-
+      - run: npm ci
+      - run: |
+          touch .env
+          echo "${{ secrets.PROD_ENV_FILE }}" > .env
       - name: Create private key file
         run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > terraform-key.pem
-
       - name: Set correct permissions for the private key file
         run: chmod 600 terraform-key.pem
-
       - name: SSH into EC2 and restart server
         run: |
           ssh -o StrictHostKeyChecking=no -i "terraform-key.pem" ubuntu@ec2-13-41-69-27.eu-west-2.compute.amazonaws.com "cd ~/actions-runner-backend/_work/cyf-cloud-video-saver/cyf-cloud-video-saver && npm install && pm2 restart cyf"
-
-      # Add Terraform steps if necessary
