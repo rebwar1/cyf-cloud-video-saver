@@ -56,3 +56,11 @@ rm -rf .terraform*
 rm -rf terraform.tfstate*
 ```
 ````
+
+Terraform will display the execution plan and ask for confirmation before applying the changes. Once confirmed, it will create the MySQL RDS instance. You can monitor the progress in your AWS Management Console or by running:
+
+# terraform show
+
+If we want to automatically format the Terraform configuration files and ensure consistent and readable code it is done by applying a standard style and for that purpose we use Terraform fmt command.
+
+# terraform fmt
