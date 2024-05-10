@@ -104,3 +104,19 @@ aws s3 sync build/ s3://youtube-saver      -this is name of bucket-
  rsync -avz --exclude 'node_modules' --exclude '.git' --exclude '.env' \
  -e "ssh -i ~/.ssh/cyf.pem" \
  . ubuntu@ec2-35-178-47-240.eu-west-2.compute.amazonaws.com:~/app
+
+
+
+🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆🏆
+mysql -u root -p
+
+SHOW DATABASES;
+USE video_app;
+SELECT * FROM videos;
+
+
+
+✅✅✅✅✅✅
+lsof -i -P -n | grep LISTEN
+This command lists all open files (-i) in Internet address format (-P)
+and numeric addresses (-n), and filters for those in listening state using grep.
